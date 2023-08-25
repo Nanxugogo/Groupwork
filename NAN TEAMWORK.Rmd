@@ -1,0 +1,55 @@
+---
+title: "Nan"
+output: html_document
+date: "2023-08-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r nan1}
+###upload data###
+income_aggregate <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-09/income_aggregate.csv')
+```
+```{r nan2}
+###check race count###
+count(income_aggregate,race)
+```
+```{r nan3}
+###check quintile count###
+count(income_aggregate,income_quintile)
+
+```
+
+```{r nan4}
+#####pretreatment for this dataset###
+df1 <- income_aggregate %>% na.omit() %>% 
+  subset(year>=2000 & income_quintile!="Top 5%")
+count(df1,income_quintile)
+#####reorder income_quintile###
+df1$income_quintile=factor(df1$income_quintile,c("Highest","Second","Third","Forth","Lowest"))
+```
+```{r nan5}
+#####ggplot###
+ggplot(df1,aes(year,income_share,color=income_quintile))+
+  geom_line(linewidth=0.5)+facet_grid(.~race)+
+  labs(title = "The income share of different races in 21th century ", xlab="Year",ylab="Income share",color="Classification")+
+  scale_x_continuous(breaks = c(2000,2010,2019))+theme_bw()
+
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
